@@ -1,6 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Book, Course, CourseBook
 from django.core.paginator import Paginator, PageNotAnInteger,  EmptyPage
+from django.contrib import messages
 
 # Create your views here.
 def home(request):
@@ -24,10 +25,19 @@ def home(request):
     # else:
     #     custom_range = range(1+index_range*10, 11+index_range*10)
     
-    return render(request=request, template_name='home.html', context={'courses':object_courses, 'paginator':paginator})
+    return render(request=request, template_name='home.html', context={'courses': object_courses, 'paginator': paginator})
 
 def detail(request, id):
     course = get_object_or_404(Course, id=id)
-    course_book = get_object_or_404(CourseBook, courseid=id)
-    book = get_object_or_404(Book, bookid=course_book.bookid)
-    return render(request=request, template_name='detail.html', context={'course':course, 'course_book':course_book, 'book':book})
+    course_book = CourseBook.objects.filter(courseid=id)
+
+    if course_book.exists():
+        for i in course_book.values():
+            bookname = Book.objects.get(bookid=i['bookid_id'])
+
+
+        context = {'course': course, 'course_book': course_book, 'book': 0}
+    else:
+        messages.error(request, '해당 강좌는 등록된 서적이 없습니다.')
+        context = {'course': course}
+    return render(request=request, template_name='detail.html', context=context)
