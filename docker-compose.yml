@@ -1,16 +1,5 @@
 version: '3.8'
 services:
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/FMB
-    ports:
-      - "8000:8000"
-    hostname: web
-    container_name: web
-
   mariadb:
     image: mariadb:latest
     environment:
@@ -21,4 +10,18 @@ services:
     volumes:
       - ./db:/docker-entrypoint-initdb.d
     container_name: mariadb
-  
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/FMB
+    ports:
+      - "8000:8000"
+    hostname: web
+    container_name: web
+    depends_on:
+      - mariadb  # MariaDB 컨테이너가 먼저 실행되도록 의존성을 설정합니다.
+    command: >
+      bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
