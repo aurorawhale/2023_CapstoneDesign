@@ -24,5 +24,4 @@ COPY requirements.txt /FMB/
 RUN pip install -r requirements.txt
 
 # 컨테이너 내에서 실행할 명령을 지정합니다.
-# 이 부분은 비워두세요. 명령은 docker-compose.yml에서 지정합니다.
 CMD []
