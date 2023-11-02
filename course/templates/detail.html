@@ -1,6 +1,50 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-
+<div class="container mt-3" style="height: auto !important;">
+<div class="my-3" style="height: auto !important;">
+    <h1 class="pb-3 mb-0 border-bottom border-secondary font-weight-bold">
+        {{ course.coursename }}({{ course.subid }})
+    </h1>
+    {% if messages %}
+        <div class="alert alert-danger m-3" style="align-content:center;">
+        {% for message in messages %}
+            <p style="text-align:center; font-size: 16pt;">{{ message.message }}</p>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="d-flex justify-content-between pt-4">
+            <p>개설학과: {{ course.department }}</p>
+            <p>담당교수: {{ course.professor }}</p>
+        </div>
+        <div class="border-top border-secondary pt-4">
+            <h3>등록된 <strong>{{ course_book.count }}</strong>개의 강의 서적이 있습니다</h3>
+            <div class="book-block my-3">
+                {% for book in course_book %}
+                    <div class="book-item p-3 my-3 border rounded">
+                        <h5>{{ book.bookid.bookname }}</h5>
+                        <div class="clearfix my-2">
+                            <div class="card small float-end bg-light rounded" style="width: 14rem;">
+                                <div class="card-body p-2 px-3">
+                                    <p class="card-title"><strong>Author</strong> : {{ book.bookid.author }}</p>
+                                    <p class="card-content"><strong>Published</strong> :
+                                        {% if book.bookid.published == 0 %}
+                                            unknown
+                                        {% else %}
+                                            {{ book.bookid.published }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="p-2">
+                                최저가 및 추천 도서를 나타낼 공간입니다...
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+</div>
 {% endblock %}
