@@ -3,6 +3,7 @@ from .models import Book, Course, CourseBook
 from django.core.paginator import Paginator, PageNotAnInteger,  EmptyPage
 from django.contrib import messages
 
+
 # Create your views here.
 def home(request):
     courses = Course.objects.all()
@@ -27,6 +28,7 @@ def home(request):
     
     return render(request=request, template_name='home.html', context={'courses': object_courses, 'paginator': paginator})
 
+
 def detail(request, id):
     course = get_object_or_404(Course, id=id)
     course_book = CourseBook.objects.filter(courseid=id)
@@ -34,7 +36,6 @@ def detail(request, id):
     if course_book.exists():
         for i in course_book.values():
             bookname = Book.objects.get(bookid=i['bookid_id'])
-
 
         context = {'course': course, 'course_book': course_book, 'book': 0}
     else:

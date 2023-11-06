@@ -12,6 +12,11 @@
             <p style="text-align:center; font-size: 16pt;">{{ message.message }}</p>
         {% endfor %}
         </div>
+        <div class="d-flex justify-content-between pt-4">
+            <button>강의명으로 도서 검색하기</button>
+            <button>직접 도서 검색하기</button>
+            <button>이전으로 돌아가기</button>
+        </div>
     {% else %}
         <div class="d-flex justify-content-between pt-4">
             <p>개설학과: {{ course.department }}</p>
@@ -42,6 +47,10 @@
                         </div>
                     </div>
                 {% endfor %}
+            </div>
+            <div class="d-flex justify-content-between pt-4">
+                <div></div>
+                <button>이전으로 돌아가기</button>
             </div>
         </div>
     {% endif %}
