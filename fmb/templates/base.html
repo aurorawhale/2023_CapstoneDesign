@@ -9,18 +9,27 @@
     <link rel="stylesheet" href="{% static 'style.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    $(document).ready(function() {
-        // 각 행을 클릭하면 해당 URL로 이동
-        $('#courseTable tbody tr').on('click', function() {
-            window.location.href = $(this).data('href');
+        var campus = "";
+        var courseID = "";
+        var subID = "";
+        var division = "";
+        var department = "";
+        var courseName = "";
+        var professor = "";
+        $(document).ready(function() {
+            // 각 행을 클릭하면 해당 URL로 이동
+            $('#courseTable tbody tr').on('click', function() {
+                window.location.href = $(this).data('href');
+            });
+            
         });
-    });
+
     </script>
 </head>
 <body>
     <nav class="navbar" style="background-color: #A20131;">
         <div class="container-fluid">
-          <a class="navbar-brand" href="{% url "home" %}">
+          <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'logo.png' %}" alt="Logo" width="23" height="27" class="d-inline-block align-text-top">
             <span style="color: aliceblue;">강의 서적 안내 서비스</span>
           </a>

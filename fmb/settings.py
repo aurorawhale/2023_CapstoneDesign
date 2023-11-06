@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+import platform
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -84,7 +85,7 @@ DATABASES = {
         'NAME': 'courseDB',
         'USER': 'root',
         'PASSWORD': '1234',
-        'HOST': '127.0.0.1',
+        'HOST': 'mariadb',
         'PORT': '3306',
     }
 }
