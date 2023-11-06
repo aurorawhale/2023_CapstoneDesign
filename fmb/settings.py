@@ -85,7 +85,7 @@ DATABASES = {
         'NAME': 'courseDB',
         'USER': 'root',
         'PASSWORD': '1234',
-        'HOST': 'mariadb',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }
