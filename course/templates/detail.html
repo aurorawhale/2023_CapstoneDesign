@@ -25,24 +25,24 @@
         <div class="border-top border-secondary pt-4">
             <h3>등록된 <strong>{{ course_book.count }}</strong>개의 강의 서적이 있습니다</h3>
             <div class="book-block my-3">
-                {% for book in course_book %}
+                {% for dbBook in course_book %}
                     <div class="book-item p-3 my-3 border rounded">
-                        <h5>{{ book.bookid.bookname }}</h5>
+                        <h5>{{ dbBook.bookid.bookname }}</h5>
                         <div class="clearfix my-2">
                             <div class="card small float-end bg-light rounded" style="width: 14rem;">
                                 <div class="card-body p-2 px-3">
-                                    <p class="card-title"><strong>Author</strong> : {{ book.bookid.author }}</p>
+                                    <p class="card-title"><strong>Author</strong> : {{ dbBook.bookid.author }}</p>
                                     <p class="card-content"><strong>Published</strong> :
-                                        {% if book.bookid.published == 0 %}
+                                        {% if dbBook.bookid.published == 0 %}
                                             unknown
                                         {% else %}
-                                            {{ book.bookid.published }}
+                                            {{ dbBook.bookid.published }}
                                         {% endif %}
                                     </p>
                                 </div>
                             </div>
                             <div class="p-2">
-                                최저가 및 추천 도서를 나타낼 공간입니다...
+                                {{ book.0 }}
                             </div>
                         </div>
                     </div>

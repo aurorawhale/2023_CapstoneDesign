@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Book, Course, CourseBook
 from django.core.paginator import Paginator, PageNotAnInteger,  EmptyPage
 from django.contrib import messages
+from fmb.settings import API_KEY
+import requests
 
 
 # Create your views here.
@@ -34,10 +36,18 @@ def detail(request, id):
     course_book = CourseBook.objects.filter(courseid=id)
 
     if course_book.exists():
-        for i in course_book.values():
-            bookname = Book.objects.get(bookid=i['bookid_id'])
+        url = "https://dapi.kakao.com/v3/search/book"
+        rest_api_key = API_KEY['kakao_rest_key']
+        header = {'Authorization': 'KakaoAK ' + rest_api_key}
 
-        context = {'course': course, 'course_book': course_book, 'book': 0}
+        books = []
+        for i in course_book.values():
+            book = Book.objects.get(bookid=i['bookid_id'])
+            params = {'query': book.bookname, 'sort': 'accuracy', 'target': 'title'}
+            result = requests.get(url, headers=header, params=params).json()
+            books.append(result)
+
+        context = {'course': course, 'course_book': course_book, 'book': books}
     else:
         messages.error(request, '해당 강좌는 등록된 서적이 없습니다.')
         context = {'course': course}
