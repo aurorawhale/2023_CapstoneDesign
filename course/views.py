@@ -43,9 +43,14 @@ def detail(request, id):
         books = []
         for i in course_book.values():
             book = Book.objects.get(bookid=i['bookid_id'])
-            params = {'query': book.bookname, 'sort': 'accuracy', 'target': 'title'}
+            params = {'query': book.bookname, 'sort': 'accuracy'}
             result = requests.get(url, headers=header, params=params).json()
-            books.append(result)
+            if 'errorType' in result:
+                books.append('error')
+            elif result['documents']:
+                books.append(result['documents'][0])
+            else:
+                books.append('none')
 
         context = {'course': course, 'course_book': course_book, 'book': books}
     else:
