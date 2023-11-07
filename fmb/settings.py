@@ -12,17 +12,18 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+import secrets
 import platform
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7&q)q3yhiha91e(olt!^e$1(ji(uur876k0#*)tg(of9(^=$_s'
+SECRET_KEY = secrets.SECRET_KEY
+API_KEY = secrets.API_KEYS
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -79,16 +80,7 @@ WSGI_APPLICATION = 'fmb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'courseDB',
-        'USER': 'root',
-        'PASSWORD': '1234',
-        'HOST': 'mariadb',
-        'PORT': '3306',
-    }
-}
+DATABASES = secrets.DATABASES
 
 
 # Password validation
