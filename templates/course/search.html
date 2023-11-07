@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load course_filter %}
+{% load static %}
+{% block content %}
+    <h1 class="m-5 text-center">도서 검색</h1>
+    <div class="container mt-3" style="height: auto !important;">
+        <div class="my-3" style="height: auto !important;">
+            <form class="d-flex justify-content-between" id="searchForm" method="get" action="{% url 'search' ' ' %}">
+                <div class="flex-grow-2 me-1">
+                    <select class="form-select me-2 rounded" id="target" name="target">
+                        <option value="">전체 검색</option>
+                        <option value="title">제목 검색</option>
+                        <option value="isbn">ISBN 검색</option>
+                        <option value="publisher">출판사 검색</option>
+                        <option value="person">인명 검색</option>
+                    </select>
+                </div>
+                 <div class="flex-grow-1 me-1">
+                     <input class="form-control rounded flex-fill" type="text" id="kw" name="kw"  placeholder="도서명을 입력하시오..." value="{{ kw|default_if_none:'' }}">
+                 </div>
+                 <input type="hidden" id="page" name="page" value="{{ page }}">
+                 <div class="input-group-append">
+                     <button class="btn btn-outline-secondary" type="submit" id="btn_search">찾기</button>
+                 </div>
+            </form>
+            <div class="book-block my-3">
+            {% if book_list %}
+                {% for book in book_list %}
+                    <div class="book-item p-3 my-3 border rounded">
+                        <div class="p-2 flex-grow-1"><h3>{{ book.title }}</h3></div>
+                        <div class="d-flex justify-content-end my-0 py-0">
+                            <div class="p-2"><strong>Author</strong> :
+                                {% for author in book.authors %}
+                                {{ author }}{% if not forloop.last %},{% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="p-2">
+                                <strong>Published</strong> :
+                                {% if book.datetime %}
+                                    {{ book.datetime|slice:":7" }}
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-start">
+                            <div class="my-3 p-2">
+                            {% if book.thumbnail %}
+                                <img src="{{ book.thumbnail }}">
+                            {% else %}
+                                <img src="{% static 'img/unkownBook.png' %}">
+                            {% endif %}
+                            </div>
+                            <div class="p-2 text-break">
+                                <h5 class="border-bottom border-dark py-2">미리보기</h5>
+                                <p>
+                                    {% if book.contents %}
+                                        {{ book.contents }}
+                                    {% else %}
+                                        내용 미리보기가 없습니다.
+                                    {% endif %}
+                                </p>
+                                <p>
+                                    {% if book.price %}
+                                        정상가: {{ book.price }}원
+                                    {% else %}
+                                        가격 정보가 없습니다
+                                    {% endif %}
+                                </p>
+                                <p>
+                                    상태: {% if book.status %} {{ book.status }} {% else %} 절판 {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        {% if book.status %}
+                        {% include 'course/store.html' %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <ul class="pagination justify-content-center">
+                    {% with current_page=meta|index:'current_page' page_max=meta|index:'total_page' %}
+                        {% if current_page == 1 %}
+                            <li class="page-item disabled">
+                                <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" data-page="{{ current_page|sub:1 }}" href="javascript:void(0)">이전</a>
+                            </li>
+                        {% endif %}
+                        {% for page_number in page_max|num_range %}
+                            {% if page_number >= current_page|sub:5 and page_number <= current_page|add:5 %}
+                                {% if page_number == current_page %}
+                                    <li class="page-item active" aria-current="page">
+                                        <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if meta|index:'is_end' %}
+                            <li class="page-item disabled">
+                                <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" data-page="{{ current_page|add:1 }}" href="javascript:void(0)">다음</a>
+                            </li>
+                        {% endif %}
+                    {% endwith %}
+                </ul>
+            {% else %}
+                <div class="book-item p-3 my-3 border rounded">
+                {% if kw %}
+                    <p class="text-center m-2">등록된 책 정보를 불러오는데 실패하였습니다.</p>
+                {% else %}
+                    <p class="text-center m-2">검색 대기 중...</p>
+                {% endif %}
+                </div>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        const page_elements = document.getElementsByClassName("page-link");
+        Array.from(page_elements).forEach(function(element) {
+            element.addEventListener('click', function() {
+                document.getElementById('page').value = this.dataset.page;
+                document.getElementById('searchForm').submit();
+            });
+        });
+    </script>
+{% endblock %}

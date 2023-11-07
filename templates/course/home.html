@@ -1,7 +1,7 @@
-{% extends 'fmb/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
-<h1 class="mt-5 text-center">수강신청 검색</h1>
+<h1 class="mt-5 text-center">강의 도서 검색</h1>
 
 <p class="mt-5">
     <form method="get" action="{% url 'home' %}" class="mb-5">
@@ -53,8 +53,8 @@
                 <td>
                     <select class="form-control" id="classification" name="classification">
                         <option value="">전체</option>
-                        <option value="전공선택" {% if request.GET.classification == '전공선택' %}selected{% endif %}>전공선택</option>
-                        <option value="전공필수" {% if request.GET.classification == '전공필수' %}selected{% endif %}>전공필수</option>
+                        <option value="전공" {% if request.GET.classification == '전공' %}selected{% endif %}>전공</option>
+                        <option value="교양" {% if request.GET.classification == '교양' %}selected{% endif %}>교양</option>
                     </select>
                 </td>
                 <th>
