@@ -49,7 +49,7 @@ def home(request):
     # else:
     #     custom_range = range(1+index_range*10, 11+index_range*10)
 
-    return render(request=request, template_name='home.html', context={'courses': object_courses, 'paginator': paginator})
+    return render(request=request, template_name='course/home.html', context={'courses': object_courses, 'paginator': paginator})
 
 
 def detail(request, id):
@@ -77,4 +77,4 @@ def detail(request, id):
     else:
         messages.error(request, '해당 강좌는 등록된 서적이 없습니다.')
         context = {'course': course}
-    return render(request=request, template_name='detail.html', context=context)
+    return render(request=request, template_name='course/detail.html', context=context)
