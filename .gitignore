@@ -161,4 +161,4 @@ cython_debug/
 venv/
 
 # project setting
-secrets.py
+fmb/secrets.py
