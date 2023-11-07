@@ -11,25 +11,25 @@ def home(request):
     courses = Course.objects.all()
 
     if campus := request.GET.get('campus'):
-        courses = courses.filter(campus=campus)
+        courses = courses.filter(campus__contains=campus)
 
     if course_number := request.GET.get('course_number'):
-        courses = courses.filter(courseid=course_number)
+        courses = courses.filter(courseid__contains=course_number)
 
     if section := request.GET.get('section'):
-        courses = courses.filter(subid=section)
+        courses = courses.filter(subid__contains=section)
 
     if classification := request.GET.get('classification'):
-        courses = courses.filter(division=classification)
+        courses = courses.filter(division__contains=classification)
 
     if department := request.GET.get('department'):
-        courses = courses.filter(department=department)
+        courses = courses.filter(department__contains=department)
 
     if course_name := request.GET.get('course_name'):
-        courses = courses.filter(coursename=course_name)
+        courses = courses.filter(coursename__contains=course_name)
 
     if professor := request.GET.get('professor'):
-        courses = courses.filter(professor=professor)
+        courses = courses.filter(professor__contains=professor)
 
     page = request.GET.get('page')
     paginator = Paginator(courses, 10)
@@ -49,7 +49,7 @@ def home(request):
     # else:
     #     custom_range = range(1+index_range*10, 11+index_range*10)
 
-    return render(request=request, template_name='home.html', context={'courses': object_courses, 'paginator': paginator})
+    return render(request=request, template_name='course/home.html', context={'courses': object_courses, 'paginator': paginator})
 
 
 def detail(request, id):
@@ -77,4 +77,4 @@ def detail(request, id):
     else:
         messages.error(request, '해당 강좌는 등록된 서적이 없습니다.')
         context = {'course': course}
-    return render(request=request, template_name='detail.html', context=context)
+    return render(request=request, template_name='course/detail.html', context=context)
