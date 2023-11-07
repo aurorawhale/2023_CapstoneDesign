@@ -1,0 +1,40 @@
+<div class="container mt-3" style="height: auto !important;">
+    <div class="my-3 info_section" style="height: auto !important;">
+        <h5>도서 판매처</h5>
+        <div class="p-2">
+            <table class="table table-sm text-center">
+                <thead>
+                    <tr class="text-center table-light">
+                        <td style="width:30%;">판매처</td>
+                        <td class="text-end" style="width:55%;">도서 가격</td>
+                        <td style="width:15%;">구매</td>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for st in book.store %}
+                    <tr>
+                        <td class="text-start">
+                            <div class="ms-4 my-2">
+                                <a href="{{ st.0 }}" class="btn btn-link border border-secondary-subtle rounded-circle p-0 m-0" style="background-color: #FFFFFF;" target="_blank">
+                                    <img src="{{ st.1 }}" class="rounded-circle" style="background-color: #FFFFFF; object-fit: contain; width:40px; height:40px;" alt="{{ st.2 }}"/>
+                                </a>
+                                <a href="{{ st.2 }}" class="link-dark link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover ms-1" target="_blank">{{ st.3 }}</a>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-end my-2">
+                                <b style="color: #e52d38;">{{ st.4 }}원</b>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="my-2">
+                                <a type="button" class="btn btn-secondary" href="{{ st.5 }}">구매</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

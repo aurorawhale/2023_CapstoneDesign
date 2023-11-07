@@ -3,7 +3,7 @@
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'img/logo.png' %}" alt="Logo" width="23" height="27" class="d-inline-block align-text-top">
-            <span style="color: aliceblue;">강의 서적 안내 서비스</span>
+            <span style="color: aliceblue;">강의 도서 안내 서비스</span>
         </a>
         <button class="navbar-toggler custom-toggler d-inline-block d-lg-none m1-auto" type="button"
             data-bs-toggle="collapse"
@@ -14,12 +14,16 @@
              <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <ul class="navbar-nav me-auto mb-lg-0">
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'home' %}" style="color: aliceblue;">강의 서적 검색</a>
+                <a class="nav-link" href="{% url 'home' %}" style="color: aliceblue;">
+                    <i class="fa-solid fa-chalkboard-user" style="color: #ffffff;"></i> 강의 도서 검색
+                </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="" style="color: aliceblue;">도서 검색</a>
+            <li class="nav-item d-flex justify-content">
+                <a class="nav-link" href="{% url 'search' ' ' %}" style="color: aliceblue;">
+                    <i class="fa-solid fa-book" style="color: #ffffff;"></i> 도서 검색
+                </a>
             </li>
         </ul>
     </div>

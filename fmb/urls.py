@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', course.home, name='home'),
     path('detail/<int:id>/', course.detail, name='detail'),
+    path('search/<str:book>/', course.search, name='search'),
+    path('recommend/<int:course_id>/<int:book_id>/', course.recommend, name='recommend'),
 ]
