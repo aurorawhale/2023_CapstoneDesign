@@ -9,10 +9,31 @@ import requests
 # Create your views here.
 def home(request):
     courses = Course.objects.all()
+
+    if campus := request.GET.get('campus'):
+        courses = courses.filter(campus=campus)
+
+    if course_number := request.GET.get('course_number'):
+        courses = courses.filter(courseid=course_number)
+
+    if section := request.GET.get('section'):
+        courses = courses.filter(subid=section)
+
+    if classification := request.GET.get('classification'):
+        courses = courses.filter(division=classification)
+
+    if department := request.GET.get('department'):
+        courses = courses.filter(department=department)
+
+    if course_name := request.GET.get('course_name'):
+        courses = courses.filter(coursename=course_name)
+
+    if professor := request.GET.get('professor'):
+        courses = courses.filter(professor=professor)
+
     page = request.GET.get('page')
-    
     paginator = Paginator(courses, 10)
-    
+
     try:
         object_courses = paginator.get_page(page)
     except PageNotAnInteger:
@@ -21,13 +42,13 @@ def home(request):
     except EmptyPage:
         page = paginator.num_pages
         object_courses = paginator.get_page(page)
-        
+
     # index_range = int(page) // 10
     # if index_range == int(page)/10:
     #     custom_range = range(index_range*10-9, 1+index_range*10)
     # else:
     #     custom_range = range(1+index_range*10, 11+index_range*10)
-    
+
     return render(request=request, template_name='home.html', context={'courses': object_courses, 'paginator': paginator})
 
 
