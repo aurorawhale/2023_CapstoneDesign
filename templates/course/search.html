@@ -116,8 +116,10 @@
                 <div class="book-item p-3 my-3 border rounded">
                 {% if meta.error == 1 %}
                     <p class="text-center m-2">등록된 책 정보를 불러오는데 실패하였습니다.</p>
-                {% else %}
+                {% elif not kw %}
                     <p class="text-center m-2">검색 대기 중...</p>
+                {% else %}
+                    <p class="text-center m-2">검색 결과가 없습니다.</p>
                 {% endif %}
                 </div>
             {% endif %}

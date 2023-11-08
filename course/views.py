@@ -5,6 +5,7 @@ from django.contrib import messages
 from fmb.settings import API_KEY
 import requests
 from . import get_store_info
+from . import naver_api
 
 
 # Create your views here.
@@ -130,5 +131,42 @@ def search(request, book):
 
 
 def recommend(request, course_id, book_id):
-    context = {}
+    course = get_object_or_404(Course, id=course_id)
+    course_book = get_object_or_404(Book, bookid=book_id)
+
+    # naver api tools
+    client_id = API_KEY['naver_id']
+    client_secret = API_KEY['naver_secret']
+    header = {'X-Naver-Client-Id': client_id, 'X-Naver-Client-Secret': client_secret,
+              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
+    # check bookname language
+    bookname = course_book.bookname
+    langcode = naver_api.is_korean(bookname)
+
+    if langcode == -1:
+        messages.error(request, '추천 도서를 찾는 과정에서 오류가 발생하였습니다')
+        context = {'course': course, 'course_book': course_book}
+        return render(request,template_name='course/recommend.html', context=context)
+    elif langcode != 'ko':
+        # translate bookname to korean
+        result = naver_api.papago_trans(langcode, bookname)
+        if result == -1:
+            messages.error(request, '추천 도서를 찾는 과정에서 오류가 발생하였습니다')
+            context = {'course': course, 'course_book': course_book}
+            return render(request, template_name='course/recommend.html', context=context)
+        else:
+            bookname = result
+
+    # 유사성 체크
+    keyword = ''
+
+    # recommend book
+    recommend_book = {}
+
+    # recommend course
+    recommend_course = Course.objects.filter(coursename__contains=course.coursename[:3])
+
+    context = {'course': course, 'course_book': course_book,
+               'recommend_book': recommend_book, 'recommend_course': recommend_course}
     return render(request=request, template_name='course/recommend.html', context=context)

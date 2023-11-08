@@ -85,7 +85,7 @@
     
 </p>
 
-<table class="table table-hover table-bordered" id="courseTable">
+<table class="table table-hover table-bordered align-middle" id="courseTable">
     <thead>
         <th>캠퍼스</th>
         <th>학수번호</th>
@@ -109,7 +109,6 @@
             </tr> 
         {% endfor %}
     </tbody>
-    
 </table>
 
 <div class="mt-5 text-center">
@@ -150,5 +149,22 @@
         {% endif %}
     </ul>
 </div>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        var campus = "";
+        var courseID = "";
+        var subID = "";
+        var division = "";
+        var department = "";
+        var courseName = "";
+        var professor = "";
+        $(document).ready(function() {
+            // 각 행을 클릭하면 해당 URL로 이동
+            $('#courseTable tbody tr').on('click', function() {
+                window.location.href = $(this).data('href');
+            });
 
+        });
+    </script>
 {% endblock %}
