@@ -12,22 +12,6 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/favicon-16x16.png' %}">
     <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        var campus = "";
-        var courseID = "";
-        var subID = "";
-        var division = "";
-        var department = "";
-        var courseName = "";
-        var professor = "";
-        $(document).ready(function() {
-            // 각 행을 클릭하면 해당 URL로 이동
-            $('#courseTable tbody tr').on('click', function() {
-                window.location.href = $(this).data('href');
-            });
-            
-        });
-    </script>
 </head>
 <body>
     {% include "navbar.html" %}

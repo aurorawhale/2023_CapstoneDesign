@@ -1,11 +1,141 @@
 {% extends 'base.html' %}
+{% load course_filter %}
 {% load static %}
 {% block content %}
     <div class="container mt-3" style="height: auto !important;">
         <div class="my-3" style="height: auto !important;">
-            <div class="d-flex justify-content-end">
+            <div class="d-flex justify-content-between pt-4">
+                <p>강의: {{ course.coursename|linebreaker }}</p>
+                <p>강의서적: {{ course_book.bookname }}</p>
+            </div>
+            <div class="border-top border-secondary pt-4">
+                {% if messages %}
+                    <div class="book-item p-3 my-3 border rounded">
+                    {% for message in messages %}
+                        <p style="text-align:center;">{{ message.message }}</p>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                <h4 class="text-center">
+                    추천 도서
+                </h4>
+                <div class="book-block my-3">
+                    {% if recommend_book %}
+                    {% for book in recommend_book %}
+                    <div class="book-item p-3 my-3 border rounded">
+                        <div class="p-2 flex-grow-1"><h3>{{ book.title }}</h3></div>
+                        <div class="d-flex justify-content-end my-0 py-0">
+                            <div class="p-2"><strong>Author</strong> :
+                                {% for author in book.authors %}
+                                {{ author }}{% if not forloop.last %},{% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="p-2">
+                                <strong>Published</strong> :
+                                {% if book.datetime %}
+                                    {{ book.datetime|slice:":7" }}
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-start">
+                            <div class="my-3 p-2">
+                            {% if book.thumbnail %}
+                                <img src="{{ book.thumbnail }}">
+                            {% else %}
+                                <img src="{% static 'img/unkownBook.png' %}">
+                            {% endif %}
+                            </div>
+                            <div class="p-2 text-break">
+                                <h5 class="border-bottom border-dark py-2">미리보기</h5>
+                                <p>
+                                    {% if book.contents %}
+                                        {{ book.contents }}
+                                    {% else %}
+                                        내용 미리보기가 없습니다.
+                                    {% endif %}
+                                </p>
+                                <p>
+                                    {% if book.price %}
+                                        정상가: {{ book.price }}원
+                                    {% else %}
+                                        가격 정보가 없습니다
+                                    {% endif %}
+                                </p>
+                                <p>
+                                    상태: {% if book.status %} {{ book.status }} {% else %} 절판 {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        {% if book.status %}
+                            {% include 'course/store.html' %}
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="book-item p-3 my-3 border rounded">
+                        <p class="text-center pt-3">추천 도서가 없습니다.</p>
+                    </div>
+                    {% endif %}
+                </div>
+                <h4 class="text-center">
+                    추천 강의
+                </h4>
+                <div class="course-block my-3">
+                    <table class="table table-sm table-hover text-center align-middle" id="courseTable">
+                        <thead>
+                            <tr class="text-center table-light">
+                                <td>캠퍼스</td>
+                                <td>학수번호</td>
+                                <td>분반</td>
+                                <td>이수구분</td>
+                                <td>개설학과</td>
+                                <td>교과목명</td>
+                                <td>담당교수</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for course in recommend_course %}
+                            <tr data-href="{% url 'detail' course.id %}">
+                                <td>{{course.campus}}</td>
+                                <td>{{course.courseid}}</td>
+                                <td>{{course.subid}}</td>
+                                <td>{{course.division}}</td>
+                                <td>{{course.department|linebreaksbr}}</td>
+                                <td class="text-start">{{course.coursename|linebreaksbr}}</td>
+                                <td>{{course.professor}}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% if not recommend_course %}
+                        <p class="text-center pt-2">추천 강의가 없습니다.</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="d-flex justify-content-end pt-4">
                 <a href="javascript:history.back()" type="button" class="btn btn-outline-primary">이전으로 돌아가기</a>
             </div>
         </div>
     </div>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+        var campus = "";
+        var courseID = "";
+        var subID = "";
+        var division = "";
+        var department = "";
+        var courseName = "";
+        var professor = "";
+        $(document).ready(function() {
+            // 각 행을 클릭하면 해당 URL로 이동
+            $('#courseTable tbody tr').on('click', function() {
+                window.location.href = $(this).data('href');
+            });
+
+        });
+    </script>
 {% endblock %}
