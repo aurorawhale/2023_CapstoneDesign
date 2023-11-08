@@ -114,7 +114,7 @@
                 </ul>
             {% else %}
                 <div class="book-item p-3 my-3 border rounded">
-                {% if kw %}
+                {% if meta.error == 1 %}
                     <p class="text-center m-2">등록된 책 정보를 불러오는데 실패하였습니다.</p>
                 {% else %}
                     <p class="text-center m-2">검색 대기 중...</p>

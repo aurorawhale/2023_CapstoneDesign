@@ -6,6 +6,7 @@ from fmb.settings import API_KEY
 import requests
 from . import get_store_info
 
+
 # Create your views here.
 def home(request):
     courses = Course.objects.all()
@@ -57,7 +58,6 @@ def detail(request, id):
     course = get_object_or_404(Course, id=id)
     course_book = CourseBook.objects.filter(courseid=id)
 
-    count = 0
     if course_book.exists():
         count = course_book.count
         paginator = Paginator(course_book, 5)
@@ -73,7 +73,7 @@ def detail(request, id):
             params = {'query': book.bookname, 'sort': 'accuracy'}
             result = requests.get(url, headers=header, params=params).json()
             if 'errorType' in result:
-                books.append('errror')
+                books.append('error')
             elif result['documents']:
                 if result['documents'][0]['status']:
                     store = get_store_info.get(result['documents'][0]['url'])
@@ -109,18 +109,21 @@ def search(request, book):
         header = {'Authorization': 'KakaoAK ' + rest_api_key}
         params = {'query': kw, 'sort': 'accuracy', 'size': 5, 'page': page, 'target': target}
         result = requests.get(url, headers=header, params=params).json()
-        meta = result['meta']
-        meta['total_page'] = meta['total_count'] // 5 if meta['total_count'] % 5 == 0 else meta['total_count'] // 5 + 1
-        meta['current_page'] = int(page)
+        if not 'errorType' in result:
+            meta = result['meta']
+            meta['total_page'] = meta['total_count'] // 5 if meta['total_count'] % 5 == 0 else meta['total_count'] // 5 + 1
+            meta['current_page'] = int(page)
 
-        book_list = result['documents']
-        for book in book_list:
-            if book['status']:
-                store = get_store_info.get(book['url'])
-            else:
-                store = 'none'
-
-            book['store'] = store
+            book_list = result['documents']
+            for book in book_list:
+                if book['status']:
+                    store = get_store_info.get(book['url'])
+                else:
+                    store = 'none'
+                book['store'] = store
+        else:
+            book_list = {}
+            meta = {'error': 1}
 
     context = {'book_list': book_list, 'page': page, 'meta': meta, 'kw': kw}
     return render(request=request, template_name='course/search.html', context=context)
