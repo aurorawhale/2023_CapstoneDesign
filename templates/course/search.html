@@ -2,9 +2,10 @@
 {% load course_filter %}
 {% load static %}
 {% block content %}
-    <h1 class="m-5 text-center">도서 검색</h1>
+    {% include "navbar.html" %}
     <div class="container mt-3" style="height: auto !important;">
         <div class="my-3" style="height: auto !important;">
+            <h1 class="m-5 text-center">도서 검색</h1>
             <form class="d-flex justify-content-between" id="searchForm" method="get" action="{% url 'search' 0 %}">
                 <div class="flex-grow-2 me-1">
                     <select class="form-select me-2 rounded" id="target" name="target">

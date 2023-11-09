@@ -2,140 +2,141 @@
 {% load course_filter %}
 {% load static %}
 {% block content %}
-<div class="container mt-3" style="height: auto !important;">
-<div class="my-3" style="height: auto !important;">
-    <h1 class="pb-3 mb-0 border-bottom border-secondary font-weight-bold">
-        {{ course.coursename|linebreaker }} ({{ course.subid }})
-    </h1>
-    <div class="d-flex justify-content-between pt-4">
-        <p>개설학과: {{ course.department }}</p>
-        <p>담당교수: {{ course.professor }}</p>
-    </div>
-    <div class="border-top border-secondary pt-4">
-        {% if messages %}
-            <div class="book-item p-3 my-3 border rounded">
-            {% for message in messages %}
-                <p style="text-align:center;">{{ message.message }}</p>
-            {% endfor %}
+    {% include "navbar.html" %}
+    <div class="container mt-3" style="height: auto !important;">
+        <div class="my-3" style="height: auto !important;">
+            <h1 class="pb-3 mb-0 border-bottom border-secondary font-weight-bold">
+                {{ course.coursename|linebreaker }} ({{ course.subid }})
+            </h1>
+            <div class="d-flex justify-content-between pt-4">
+                <p>개설학과: {{ course.department }}</p>
+                <p>담당교수: {{ course.professor }}</p>
             </div>
-        {% else %}
-            <h3>등록된 <strong>{{ count }}</strong>개의 강의 도서가 있습니다</h3>
-            <div class="book-block my-3">
-            {% for dbBook in course_book %}
-            {% with book=book|index:forloop.counter0 %}
-                <div class="book-item p-3 my-3 border rounded">
-                    <div class="flex-grow-1 px-2"><h3>{{ dbBook.bookid.bookname }}</h3></div>
-                    <div class="d-flex justify-content-start my-0 py-0">
-                        <div class="px-2"><strong>Author</strong> : {{ dbBook.bookid.author }}</div>
-                        <div class="px-2">
-                            <strong>Published</strong> :
-                            {% if book.datetime %}
-                                {{ book.datetime|slice:":7" }}
-                            {% else %}
-                                {% if dbBook.bookid.published %}
-                                    {{ dbbook.bookid.published }}
-                                {% else %}Unknown{% endif %}
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% if book == 'none' %}
-                        <div class="my-2 py-0 text-center">
-                            <p>등록된 서적을 찾을 수 없습니다...직접 검색하시겠습니까?</p>
-                            <div class="d-flex justify-content-center">
-                                <a href="{% url 'search' dbBook.bookid.bookid %}" type="button" class="btn btn-outline-primary me-3">예</a>
-                                <a href="javascript:history.back()" type="button" class="btn btn-outline-primary">아니요</a>
-                            </div>
-                        </div>
-                    {% elif book == 'error'%}
-                        <div class="my-0 py-0 text-center">
-                            <p>도서 정보를 불러오는데 실패하였습니다.</p>
-                        </div>
-                    {% else %}
-                        <div class="d-flex justify-content-start">
-                            <div class="my-3 p-2">
-                            {% if book.thumbnail %}
-                                <img src="{{ book.thumbnail }}">
-                            {% else %}
-                                <img src="{% static 'img/unkownBook.png' %}">
-                            {% endif %}
-                            </div>
-                            <div class="p-2 text-break">
-                                <h5 class="border-bottom border-dark py-2">줄거리</h5>
-                                <p>
-                                    {% if book.contents %}
-                                        {{ book.contents }}
-                                    {% else %}
-                                        줄거리 설명이 없습니다
-                                    {% endif %}
-                                </p>
-                                <p>
-                                    {% if book.price %}
-                                        정상가: {{ book.price }}원
-                                    {% else %}
-                                        가격 정보가 없습니다
-                                    {% endif %}
-                                </p>
-                                <p>
-                                    상태: {{ book.status }}
-                                </p>
-                            </div>
-                        </div>
-                        {% if book.status %}
-                            {% include 'course/store.html' %}
-                        {% endif %}
-                    <div class="d-flex justify-content-center">
-                        <a type="button" class="m-1 btn btn-outline-secondary" href="{% url 'recommend' course.id dbBook.bookid.bookid %}">추천 도서 확인하기</a>
-                    </div>
-                    {% endif %}
-                </div>
-            {% endwith %}
-            {% endfor %}
-            </div>
-            <div class="book-page my-3">
-                <ul class="pagination justify-content-center">
-                    {% if course_book.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" data-page="{{ course_book.previous_page_number }}" href="javascript:void(0)">이전</a>
-                        </li>
-                    {% else %}
-                        <li class="page-item disabled">
-                            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
-                        </li>
-                    {% endif %}
-                    {% for page_number in course_book.paginator.page_range %}
-                        {% if page_number >= course_book.number|add:-5 and page_number <= course_book.number|add:5 %}
-                        {% if page_number == course_book.number %}
-                            <li class="page-item active" aria-current="page">
-                                <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
-                            </li>
-                        {% else %}
-                            <li class="page-item">
-                                <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
-                            </li>
-                        {% endif %}
-                        {% endif %}
+            <div class="border-top border-secondary pt-4">
+                {% if messages %}
+                    <div class="book-item p-3 my-3 border rounded">
+                    {% for message in messages %}
+                        <p style="text-align:center;">{{ message.message }}</p>
                     {% endfor %}
-                    {% if course_book.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" data-page="{{ course_book.next_page_number }}" href="javascript:void(0)">다음</a>
-                    </li>
-                    {% else %}
-                        <li class="page-item disabled">
-                            <a class="page-link" tabindex="-1" aria-disabled="true" href="javascript:void(0)">다음</a>
-                        </li>
-                    {% endif %}
-                </ul>
+                    </div>
+                {% else %}
+                    <h3>등록된 <strong>{{ count }}</strong>개의 강의 도서가 있습니다</h3>
+                    <div class="book-block my-3">
+                    {% for dbBook in course_book %}
+                    {% with book=book|index:forloop.counter0 %}
+                        <div class="book-item p-3 my-3 border rounded">
+                            <div class="flex-grow-1 px-2"><h3>{{ dbBook.bookid.bookname }}</h3></div>
+                            <div class="d-flex justify-content-start my-0 py-0">
+                                <div class="px-2"><strong>Author</strong> : {{ dbBook.bookid.author }}</div>
+                                <div class="px-2">
+                                    <strong>Published</strong> :
+                                    {% if book.datetime %}
+                                        {{ book.datetime|slice:":7" }}
+                                    {% else %}
+                                        {% if dbBook.bookid.published %}
+                                            {{ dbbook.bookid.published }}
+                                        {% else %}Unknown{% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if book == 'none' %}
+                                <div class="my-2 py-0 text-center">
+                                    <p>등록된 서적을 찾을 수 없습니다...직접 검색하시겠습니까?</p>
+                                    <div class="d-flex justify-content-center">
+                                        <a href="{% url 'search' dbBook.bookid.bookid %}" type="button" class="btn btn-outline-primary me-3">예</a>
+                                        <a href="javascript:history.back()" type="button" class="btn btn-outline-primary">아니요</a>
+                                    </div>
+                                </div>
+                            {% elif book == 'error'%}
+                                <div class="my-0 py-0 text-center">
+                                    <p>도서 정보를 불러오는데 실패하였습니다.</p>
+                                </div>
+                            {% else %}
+                                <div class="d-flex justify-content-start">
+                                    <div class="my-3 p-2">
+                                    {% if book.thumbnail %}
+                                        <img src="{{ book.thumbnail }}">
+                                    {% else %}
+                                        <img src="{% static 'img/unkownBook.png' %}">
+                                    {% endif %}
+                                    </div>
+                                    <div class="p-2 text-break">
+                                        <h5 class="border-bottom border-dark py-2">줄거리</h5>
+                                        <p>
+                                            {% if book.contents %}
+                                                {{ book.contents }}
+                                            {% else %}
+                                                줄거리 설명이 없습니다
+                                            {% endif %}
+                                        </p>
+                                        <p>
+                                            {% if book.price %}
+                                                정상가: {{ book.price }}원
+                                            {% else %}
+                                                가격 정보가 없습니다
+                                            {% endif %}
+                                        </p>
+                                        <p>
+                                            상태: {{ book.status }}
+                                        </p>
+                                    </div>
+                                </div>
+                                {% if book.status %}
+                                    {% include 'course/store.html' %}
+                                {% endif %}
+                            <div class="d-flex justify-content-center">
+                                <a type="button" class="m-1 btn btn-outline-secondary" href="{% url 'recommend' course.id dbBook.bookid.bookid %}">추천 도서 확인하기</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% endwith %}
+                    {% endfor %}
+                    </div>
+                    <div class="book-page my-3">
+                        <ul class="pagination justify-content-center">
+                            {% if course_book.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" data-page="{{ course_book.previous_page_number }}" href="javascript:void(0)">이전</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+                                </li>
+                            {% endif %}
+                            {% for page_number in course_book.paginator.page_range %}
+                                {% if page_number >= course_book.number|add:-5 and page_number <= course_book.number|add:5 %}
+                                {% if page_number == course_book.number %}
+                                    <li class="page-item active" aria-current="page">
+                                        <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
+                                    </li>
+                                {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if course_book.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" data-page="{{ course_book.next_page_number }}" href="javascript:void(0)">다음</a>
+                            </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" tabindex="-1" aria-disabled="true" href="javascript:void(0)">다음</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                {% endif %}
             </div>
-        {% endif %}
+            <div class="d-flex justify-content-end">
+                <a href="javascript:history.back()" type="button" class="btn btn-outline-primary">이전으로 돌아가기</a>
+            </div>
+            <form id="searchForm" method="get" action="{% url 'detail' course.id %}">
+                <input type="hidden" id="page" name="page" value="{{ page }}">
+            </form>
+        </div>
     </div>
-    <div class="d-flex justify-content-end">
-        <a href="javascript:history.back()" type="button" class="btn btn-outline-primary">이전으로 돌아가기</a>
-    </div>
-    <form id="searchForm" method="get" action="{% url 'detail' course.id %}">
-        <input type="hidden" id="page" name="page" value="{{ page }}">
-    </form>
-</div>
-</div>
 {% endblock %}
 {% block script %}
     <script type="text/javascript">

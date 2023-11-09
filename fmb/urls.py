@@ -19,7 +19,8 @@ import course.views as course
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', course.home, name='home'),
+    path('', course.main, name='main'),
+    path('course', course.main, name='main'),
     path('detail/<int:id>/', course.detail, name='detail'),
     path('search/<int:bookid>/', course.search, name='search'),
     path('recommend/<int:course_id>/<int:book_id>/', course.recommend, name='recommend'),
