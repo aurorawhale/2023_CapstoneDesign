@@ -7,7 +7,7 @@ import re
 
 
 # Create your views here.
-def home(request):
+def main(request):
     courses = Course.objects.all()
 
     if campus := request.GET.get('campus'):
@@ -49,7 +49,7 @@ def home(request):
     # else:
     #     custom_range = range(1+index_range*10, 11+index_range*10)
 
-    return render(request=request, template_name='course/home.html', context={'courses': object_courses, 'paginator': paginator})
+    return render(request=request, template_name='course/main.html', context={'courses': object_courses, 'paginator': paginator})
 
 
 def detail(request, id):

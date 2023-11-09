@@ -1,7 +1,7 @@
 {% load static %}
 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #A20131;">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'home' %}">
+        <a class="navbar-brand" href="{% url 'main' %}">
             <img src="{% static 'img/logo.png' %}" alt="Logo" width="23" height="27" class="d-inline-block align-text-top">
             <span style="color: aliceblue;">강의 도서 안내 서비스</span>
         </a>
@@ -16,7 +16,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-lg-0">
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'home' %}" style="color: aliceblue;">
+                <a class="nav-link" href="{% url 'main' %}" style="color: aliceblue;">
                     <i class="fa-solid fa-chalkboard-user" style="color: #ffffff;"></i> 강의 도서 검색
                 </a>
             </li>

@@ -2,6 +2,7 @@
 {% load course_filter %}
 {% load static %}
 {% block content %}
+    {% include "navbar.html" %}
     <div class="container mt-3" style="height: auto !important;">
         <div class="my-3" style="height: auto !important;">
             <div class="d-flex justify-content-between pt-4">
@@ -86,17 +87,17 @@
                 <h4 class="text-center">
                     추천 강의
                 </h4>
-                <div class="course-block my-3">
+                <div class="course-block table-responsive my-3">
                     <table class="table table-sm table-hover text-center align-middle" id="courseTable">
                         <thead>
                             <tr class="text-center table-light">
-                                <td>캠퍼스</td>
-                                <td>학수번호</td>
-                                <td>분반</td>
-                                <td>이수구분</td>
-                                <td>개설학과</td>
-                                <td>교과목명</td>
-                                <td>담당교수</td>
+                                <th style="width:7%;">캠퍼스</th>
+                                <th style="width:8%;">학수번호</th>
+                                <th style="width:5%;">분반</th>
+                                <th style="width:8%;">이수구분</th>
+                                <th style="width:30%;">개설학과</th>
+                                <th style="width:32%">교과목명</th>
+                                <th style="width:10%;">담당교수</th>
                             </tr>
                         </thead>
                         <tbody>
