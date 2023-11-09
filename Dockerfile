@@ -8,10 +8,18 @@ ENV LC_ALL C.UTF-8
 
 # Miniconda 다운로드 및 설치를 위한 환경 변수 설정
 ENV PATH /opt/conda/bin:$PATH
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends tzdata g++ curl
+
+# 자바 설치
+RUN apt-get install -y default-jdk default-jre
 
 # 필요한 패키지 설치
 RUN conda install -y python=3.11 && \
     conda install -y mysqlclient
+
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # 작업 디렉토리 생성
 RUN mkdir /FMB
@@ -25,3 +33,4 @@ RUN pip install -r requirements.txt
 
 # 컨테이너 내에서 실행할 명령을 지정합니다.
 CMD []
+

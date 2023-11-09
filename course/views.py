@@ -1,11 +1,9 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from .models import Book, Course, CourseBook
 from django.core.paginator import Paginator, PageNotAnInteger,  EmptyPage
 from django.contrib import messages
-from fmb.settings import API_KEY
-import requests
-from . import get_store_info
-from . import naver_api
+from . import get_store_info, naver_api, kakao_api, keyword
+import re
 
 
 # Create your views here.
@@ -64,52 +62,43 @@ def detail(request, id):
         paginator = Paginator(course_book, 5)
         course_book = paginator.get_page(page)
 
-        url = "https://dapi.kakao.com/v3/search/book"
-        rest_api_key = API_KEY['kakao_rest_key']
-        header = {'Authorization': 'KakaoAK ' + rest_api_key}
-
         books = []
         for i in course_book:
             book = Book.objects.get(bookid=i.bookid_id)
-            params = {'query': book.bookname, 'sort': 'accuracy'}
-            result = requests.get(url, headers=header, params=params).json()
-            if 'errorType' in result:
+            params = {'query': re.sub(r'\([^)]*\)', "", book.bookname), 'sort': 'accuracy'}
+            result = kakao_api.get_books(params)
+            if result == -1:
                 books.append('error')
             elif result['documents']:
                 if result['documents'][0]['status']:
                     store = get_store_info.get(result['documents'][0]['url'])
-
                 else:
                     store = 'none'
                 result['documents'][0]['store'] = store
                 books.append(result['documents'][0])
-
             else:
                 books.append('none')
 
         context = {'course': course, 'course_book': course_book, 'book': books, 'count': count}
     else:
-        messages.error(request, '해당 강좌는 등록된 도서가 없습니다.')
-        context = {'course': course}
+            messages.error(request, '해당 강좌는 등록된 도서가 없습니다.')
+            context = {'course': course}
     return render(request=request, template_name='course/detail.html', context=context)
 
 
-def search(request, book):
+def search(request, bookid):
     page = request.GET.get('page', '1')
-    if book == ' ':
+    if bookid == 0:
         kw = request.GET.get('kw', '')
     else:
-        kw = book
+        kw = Book.objects.get(bookid=bookid).bookname
     target = request.GET.get('target', '')
 
     book_list = []
     meta = []
     if kw:
-        url = "https://dapi.kakao.com/v3/search/book"
-        rest_api_key = API_KEY['kakao_rest_key']
-        header = {'Authorization': 'KakaoAK ' + rest_api_key}
         params = {'query': kw, 'sort': 'accuracy', 'size': 5, 'page': page, 'target': target}
-        result = requests.get(url, headers=header, params=params).json()
+        result = kakao_api.get_books(params)
         if not 'errorType' in result:
             meta = result['meta']
             meta['total_page'] = meta['total_count'] // 5 if meta['total_count'] % 5 == 0 else meta['total_count'] // 5 + 1
@@ -134,38 +123,48 @@ def recommend(request, course_id, book_id):
     course = get_object_or_404(Course, id=course_id)
     course_book = get_object_or_404(Book, bookid=book_id)
 
-    # naver api tools
-    client_id = API_KEY['naver_id']
-    client_secret = API_KEY['naver_secret']
-    header = {'X-Naver-Client-Id': client_id, 'X-Naver-Client-Secret': client_secret,
-              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-
     # check bookname language
-    bookname = course_book.bookname
-    langcode = naver_api.is_korean(bookname)
+    params = {'query': re.sub(r'\([^)]*\)', "", course_book.bookname), 'sort': 'accuracy', 'size': 20}
+    book_list = kakao_api.get_books(params)
+    bookname = [x['title'] for x in book_list['documents']]
 
-    if langcode == -1:
-        messages.error(request, '추천 도서를 찾는 과정에서 오류가 발생하였습니다')
-        context = {'course': course, 'course_book': course_book}
-        return render(request,template_name='course/recommend.html', context=context)
-    elif langcode != 'ko':
-        # translate bookname to korean
-        result = naver_api.papago_trans(langcode, bookname)
-        if result == -1:
+    langcode = [naver_api.is_korean(name) for name in bookname]
+    for i in range(len(bookname)):
+        if langcode == -1:
             messages.error(request, '추천 도서를 찾는 과정에서 오류가 발생하였습니다')
             context = {'course': course, 'course_book': course_book}
             return render(request, template_name='course/recommend.html', context=context)
-        else:
-            bookname = result
+        elif langcode[i] != 'ko':
+            result = naver_api.papago_trans(langcode[i], bookname[i])
+            if result == -1:
+                messages.error(request, '추천 도서를 찾는 과정에서 오류가 발생하였습니다')
+                context = {'course': course, 'course_book': course_book}
+                return render(request, template_name='course/recommend.html', context=context)
+            else:
+                bookname[i] = result
 
     # 유사성 체크
-    keyword = ''
+    key = keyword.get_keyword(bookname+[course.coursename], 10)[0][0]
 
     # recommend book
-    recommend_book = {}
+    prams = {'query': key, 'sort': 'accuracy', 'size': 3}
+    result = kakao_api.get_books(prams)
+    if result == -1:
+        recommend_book = 'error'
+    elif result['documents']:
+        recommend_book = result['documents']
+        for book in recommend_book:
+            if book['status']:
+                store = get_store_info.get(book['url'])
+            else:
+                store = 'none'
+            book['store'] = store
+    else:
+        recommend_book = 'none'
 
     # recommend course
-    recommend_course = Course.objects.filter(coursename__contains=course.coursename[:3])
+    recommend_course = Course.objects.filter(coursename__contains=key).exclude(coursename=course.coursename)
+    recommend_course = recommend_course[:5 if len(recommend_course) > 5 else len(recommend_book)]
 
     context = {'course': course, 'course_book': course_book,
                'recommend_book': recommend_book, 'recommend_course': recommend_course}

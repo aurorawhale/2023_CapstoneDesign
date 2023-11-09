@@ -20,7 +20,15 @@
                     추천 도서
                 </h4>
                 <div class="book-block my-3">
-                    {% if recommend_book %}
+                    {% if recommend_book == 'error'%}
+                        <div class="book-item p-3 my-3 border rounded">
+                            <p>도서 정보를 불러오는데 실패하였습니다.</p>
+                        </div>
+                    {% elif recommend_book == 'none' %}
+                        <div class="book-item p-3 my-3 border rounded">
+                            <p class="text-center pt-3">추천 도서가 없습니다.</p>
+                        </div>
+                    {% else %}
                     {% for book in recommend_book %}
                     <div class="book-item p-3 my-3 border rounded">
                         <div class="p-2 flex-grow-1"><h3>{{ book.title }}</h3></div>
@@ -73,10 +81,6 @@
                         {% endif %}
                     </div>
                     {% endfor %}
-                    {% else %}
-                    <div class="book-item p-3 my-3 border rounded">
-                        <p class="text-center pt-3">추천 도서가 없습니다.</p>
-                    </div>
                     {% endif %}
                 </div>
                 <h4 class="text-center">

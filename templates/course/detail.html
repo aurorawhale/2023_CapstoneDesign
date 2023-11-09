@@ -25,7 +25,7 @@
             {% with book=book|index:forloop.counter0 %}
                 <div class="book-item p-3 my-3 border rounded">
                     <div class="flex-grow-1 px-2"><h3>{{ dbBook.bookid.bookname }}</h3></div>
-                    <div class="d-flex justify-content-end my-0 py-0">
+                    <div class="d-flex justify-content-start my-0 py-0">
                         <div class="px-2"><strong>Author</strong> : {{ dbBook.bookid.author }}</div>
                         <div class="px-2">
                             <strong>Published</strong> :
@@ -42,7 +42,7 @@
                         <div class="my-2 py-0 text-center">
                             <p>등록된 서적을 찾을 수 없습니다...직접 검색하시겠습니까?</p>
                             <div class="d-flex justify-content-center">
-                                <a href="{% url 'search' dbBook.bookid.bookname %}" type="button" class="btn btn-outline-primary me-3">예</a>
+                                <a href="{% url 'search' dbBook.bookid.bookid %}" type="button" class="btn btn-outline-primary me-3">예</a>
                                 <a href="javascript:history.back()" type="button" class="btn btn-outline-primary">아니요</a>
                             </div>
                         </div>
